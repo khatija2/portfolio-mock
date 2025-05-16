@@ -2,12 +2,17 @@ from flask import Flask, render_template, request, jsonify
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
 
 # Gmail configuration
-GMAIL_USER = "your_email@gmail.com"  # Replace with your Gmail address
-GMAIL_PASSWORD = "your_app_password"  # Replace with your app password
+GMAIL_USER = os.environ.get('EMAIL_USER') 
+EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD') 
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
 GMAIL_PORT = 587
 GMAIL_SERVER = "smtp.gmail.com"
 
@@ -30,7 +35,7 @@ def send_email(recipient, subject, body, sender=GMAIL_USER):
         # Connect to Gmail SMTP server
         server = smtplib.SMTP(GMAIL_SERVER, GMAIL_PORT)
         server.starttls()  # Secure the connection
-        server.login(GMAIL_USER, GMAIL_PASSWORD)
+        server.login(GMAIL_USER, EMAIL_PASSWORD)
         
         # Send email
         text = msg.as_string()
@@ -70,7 +75,7 @@ def submit_contact():
         """
 
          # Send email notification to admin
-        admin_email = "your_admin_email@example.com"  # Replace with where you want to receive notifications
+        admin_email = ADMIN_EMAIL # Replace with where you want to receive notifications
         email_sent = send_email(admin_email, email_subject, email_body)
         
          # Return appropriate response
