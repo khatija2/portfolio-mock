@@ -17,7 +17,7 @@ GMAIL_PORT = 587
 GMAIL_SERVER = "smtp.gmail.com"
 
 # Configuration
-app.config['SECRET_KEY'] = 'your-secret-key'  # Change this to a random string in production
+app.config['SECRET_KEY'] = os.environ.get('SECRET')  # Change this to a random string in production
 
 
 def send_email(recipient, subject, body, sender=GMAIL_USER):
