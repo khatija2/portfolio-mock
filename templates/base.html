@@ -21,11 +21,18 @@
                     <li><a href="{{ url_for('index') }}#portfolio">Portfolio</a></li>
                     <li><a href="{{ url_for('index') }}#contact">Contact</a></li>
                 </ul>
+                <button class="burger" id="burger" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
                 <div class="menu-toggle" id="mobile-menu">
                     <i class="fas fa-bars"></i>
                 </div>
             </nav>
+    
         </div>
+       
     </header>
 
     {% block content %}{% endblock %}
