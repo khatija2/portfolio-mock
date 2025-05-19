@@ -1,47 +1,33 @@
 from flask import Flask, render_template, request, jsonify
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 import os
+import resend
 
 load_dotenv()
 
 app = Flask(__name__)
 
 # Gmail configuration
-GMAIL_USER = os.environ.get('EMAIL_USER') 
-EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD') 
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY')
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
-GMAIL_PORT = 587
-GMAIL_SERVER = "smtp.gmail.com"
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL') 
 
 # Configuration
 app.config['SECRET_KEY'] = os.environ.get('SECRET')  # Change this to a random string in production
 
 
-def send_email(recipient, subject, body, sender=GMAIL_USER):
-    """Send an email using Gmail SMTP"""
-    # Create message
-    msg = MIMEMultipart()
-    msg['From'] = sender
-    msg['To'] = recipient
-    msg['Subject'] = subject
-    
-    # Add message body
-    msg.attach(MIMEText(body, 'plain'))
-    
+resend.api_key = RESEND_API_KEY
+
+def send_email(recipient, subject, body, sender=SENDER_EMAIL):
+    """Send an email using Resend API"""
     try:
-        # Connect to Gmail SMTP server
-        server = smtplib.SMTP(GMAIL_SERVER, GMAIL_PORT)
-        server.starttls()  # Secure the connection
-        server.login(GMAIL_USER, EMAIL_PASSWORD)
-        
-        # Send email
-        text = msg.as_string()
-        server.sendmail(sender, recipient, text)
-        server.quit()
-        return True
+        response = resend.Emails.send({
+            "from": sender,
+            "to": [recipient],
+            "subject": subject,
+            "text": body
+        })
+        return True if response.get("id") else False
     except Exception as e:
         print(f"Error sending email: {e}")
         return False

@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Typing effect
     const typedElement = document.getElementById('typed');
-    const phrases = ['John Doe', 'a Web Developer', 'a UI Designer', 'a Problem Solver'];
+    const phrases = ['RoboKat', 'a Web Developer', 'a UI Designer', 'a Problem Solver'];
     let currentPhraseIndex = 0;
     let currentCharIndex = 0;
     let isDeleting = false;
@@ -76,50 +76,39 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(type, 1000);
     
     // Skill cards expansion
-    const skillCards = document.querySelectorAll('.skill-card');
-    
-    skillCards.forEach(card => {
-        card.addEventListener('click', function() {
-            this.classList.toggle('expanded');
-        });
-    });
-    
-    // Portfolio filtering
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const portfolioItems = document.querySelectorAll('.portfolio-item');
-    
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove active class from all buttons
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            // Add active class to clicked button
-            this.classList.add('active');
+    (function() {
+        
+        // Direct execution plus multiple event listeners for redundancy
+        setupSkillCards();
+        
+        // Also set up on DOM content loaded
+        document.addEventListener('DOMContentLoaded', setupSkillCards);  
+        
+        // And also on window load just to be absolutely sure
+        window.addEventListener('load', setupSkillCards);
+        
+        function setupSkillCards() {
+            const skillCards = document.querySelectorAll('.skill-card');
             
-            const filterValue = this.getAttribute('data-filter');
-            
-            portfolioItems.forEach(item => {
-                if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
+            skillCards.forEach(card => {
+                // Remove any existing click listeners first
+                const newCard = card.cloneNode(true);
+                card.parentNode.replaceChild(newCard, card);
+                
+                // Add fresh click listener
+                newCard.addEventListener('click', function(e) {
+                    console.log("Card clicked: " + this.getAttribute('data-skill'));
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Toggle expanded class
+                    this.classList.toggle('expanded');
+                    
+                    return false;
+                });
             });
-        });
-    });
+        }
+    })();
     
-    // Simple form submission (for demonstration)
-    const contactForm = document.getElementById('contact-form');
-    
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const subject = document.getElementById('subject').value;
-        const message = document.getElementById('message').value;
-        
-        // In a real application, you would send this data to a server
-        alert(`Thank you for your message, ${name}! This is a demo form, so no message was actually sent.`);
-        contactForm.reset();
-    });
+
 });
